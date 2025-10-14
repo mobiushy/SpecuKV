@@ -1,22 +1,41 @@
 easydict
 typed-argument-parser
+seaborn
 kornia
 gputil
 colorama
 omegaconf
 pandas
-timm==0.9.6
+# timm==0.9.6
+timm==0.6.13
 decord
-transformers
-torch==2.5.1
+# transformers
+transformers==4.38.2
+# torch==2.5.1
+# torch==2.6.0
+torch==2.7.0
 pytz
 pandas
+wandb
 colorama
 imageio
 einops
 openai
+httpx==0.20.0
 opencv-python
-flash_attn
-clean-fid
-torchmetrics
-datasets
+# flash_attn
+
+# eval
+# pip install image-reward pytorch_lightning
+# pip install diffusers==0.16.0
+# pip install git+https://github.com/openai/CLIP.git ftfy
+# pip install huggingface_hub==0.25.2
+
+# pip install hpsv2
+# wget https://dl.fbaipublicfiles.com/mmf/clip/bpe_simple_vocab_16e6.txt.gz
+# mv bpe_simple_vocab_16e6.txt.gz /opt/conda/envs/viar/lib/python3.10/site-packages/hpsv2/src/open_clip
+
+# pip install openmim
+# mim install mmengine
+# mim install /gemini/space/jiangpf/models/mmcv_full-1.7.2-cp310-cp310-linux_x86_64.whl
+# pip install mmdet==2.28.2 clip_benchmark open-clip-torch==2.20.0
