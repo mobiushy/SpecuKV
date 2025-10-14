@@ -21,9 +21,9 @@ def main():
     torch.cuda.set_device(0)
     device = torch.device("cuda")
 
-    model_path='weights/infinity_2b_reg.pth'
-    vae_path='weights/infinity_vae_d32_reg.pth'
-    text_encoder_ckpt = 'weights/flan-t5-xl'
+    model_path='/gemini/space/jiangpf/models/infinity/infinity_2b_reg.pth'
+    vae_path='/gemini/space/jiangpf/models/infinity/infinity_vae_d32reg.pth'
+    text_encoder_ckpt='/gemini/space/jiangpf/models/infinity/flan-t5-xl'
     args=argparse.Namespace(
         pn='1M',
         model_path=model_path,
@@ -47,8 +47,8 @@ def main():
         seed=0,
         bf16=1,
         save_file_1='2b_full.jpg',
-        save_file_2='2b_scalekv.jpg',        
-        enable_model_cache=1
+        save_file_2='2b_scalekv.jpg',
+        enable_model_cache=0,
     )
 
     text_tokenizer, text_encoder = load_tokenizer(t5_path=args.text_encoder_ckpt)
