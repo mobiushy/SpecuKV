@@ -23,6 +23,9 @@ einops
 openai
 httpx==0.20.0
 opencv-python
+datasets
+clean-fid
+torchmetrics
 # flash_attn
 
 # eval

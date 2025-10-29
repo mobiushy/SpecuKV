@@ -12,13 +12,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.run_infinity import load_tokenizer, load_visual_tokenizer, load_transformer, gen_one_img, dynamic_resolution_h_w, h_div_w_templates
 
-from enable_scale_kv_8b import enable_scale_kv
+from enable_scale_kv_2b import enable_scale_kv
 
 def main():
-    
-    model_path='weights/infinity_2b_reg.pth'
-    vae_path='weights/infinity_vae_d32_reg.pth'
-    text_encoder_ckpt = 'weights/flan-t5-xl'
+    model_path='/gemini/space/jiangpf/models/infinity/infinity_2b_reg.pth'
+    vae_path='/gemini/space/jiangpf/models/infinity/infinity_vae_d32reg.pth'
+    text_encoder_ckpt='/gemini/space/jiangpf/models/infinity/flan-t5-xl'
     args=argparse.Namespace(
         output_root="samples/scalekv_2b",
         pn='1M',
@@ -42,7 +41,7 @@ def main():
         checkpoint_type='torch',
         seed=0,
         bf16=1,
-        enable_model_cache=1,
+        enable_model_cache=0,
         cfg = 3,
         tau = 1.0,
         h_div_w = 1/1,
@@ -58,7 +57,7 @@ def main():
     device = torch.device(f'cuda:{rank}')
 
     # Load COCO 2017 validation dataset
-    dataset = load_dataset("phiyodr/coco2017", split="validation")
+    dataset = load_dataset("/gemini/space/jiangpf/data/coco2017", split="validation")
     
     # Handle split argument
     if args.split is not None:
