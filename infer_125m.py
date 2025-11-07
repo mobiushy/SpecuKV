@@ -18,18 +18,18 @@ def main():
     torch.cuda.set_device(0)
     device = torch.device("cuda")
 
-    model_path='/gemini/space/jiangpf/models/infinity/infinity_2b_reg.pth'
-    vae_path='/gemini/space/jiangpf/models/infinity/infinity_vae_d32reg.pth'
-    text_encoder_ckpt='/gemini/space/jiangpf/models/infinity/flan-t5-xl'
+    model_path='/gemini/space/jiangpf/models/infinity/infinity_125M_256x256.pth'
+    vae_path='/gemini/space/jiangpf/models/infinity/infinity_vae_d16.pth'
+    text_encoder_ckpt = '/gemini/space/jiangpf/models/infinity/flan-t5-xl'
     args=argparse.Namespace(
-        pn='1M',
+        pn='0.06M',
         model_path=model_path,
         cfg_insertion_layer=0,
-        vae_type=32,
+        vae_type=16,
         vae_path=vae_path,
         add_lvl_embeding_only_first_block=1,
         use_bit_label=1,
-        model_type='infinity_2b',
+        model_type='infinity_layer12',
         rope2d_each_sa_layer=1,
         rope2d_normalized_by_hw=2,
         use_scale_schedule_embedding=0,
@@ -43,8 +43,7 @@ def main():
         checkpoint_type='torch',
         seed=0,
         bf16=1,
-        save_file_1='2b_test.jpg',
-        save_file_2='2b_scalekv.jpg',
+        save_file_1='tmp.jpg',
         enable_model_cache=0,
     )
 

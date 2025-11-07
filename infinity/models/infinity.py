@@ -536,6 +536,10 @@ class Infinity(nn.Module):
         num_stages_minus_1 = len(scale_schedule)-1
         summed_codes = 0
         for si, pn in enumerate(scale_schedule):   # si: i-th segment
+            # kv caching control
+            # if si>=7:
+            #     for b in self.unregistered_blocks[10:]: (b.sa if isinstance(b, CrossAttnBlock) else b.attn).kv_caching(False)
+            
             cfg = cfg_list[si]
             if si >= trunk_scale:
                 break

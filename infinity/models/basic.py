@@ -306,9 +306,51 @@ class SelfAttention(nn.Module):
                 oup = attn_fn(q, k, v, scale=self.scale).transpose(1, 2).reshape(B, L, C)
             else:
                 oup = slow_attn(query=q, key=k, value=v, scale=self.scale, attn_mask=attn_bias_or_two_vector, dropout_p=0).transpose(1, 2).reshape(B, L, C)
+
+                # get attn weight 1
+                # length_of_k = k.shape[-2]
+                # eye_matrix_of_k = torch.eye(length_of_k).cuda().expand(k.shape[0], k.shape[1], -1, -1)
+                # concat_v = torch.cat([v, eye_matrix_of_k], dim=-1)
+                # sdpa_out = torch.nn.functional.scaled_dot_product_attention(
+                #     q, k, concat_v, scale=self.scale, attn_mask=attn_bias_or_two_vector, dropout_p=0
+                # )
+                # oup, attn_weight = sdpa_out.split([v.shape[-1], length_of_k], dim=-1)
+                # oup = oup.transpose(1, 2).reshape(B, L, C)
+                # # print("Attention weight shape:", attn_weight.shape)
+
+                # get attn weight 2
+                # oup = self.sdpa(query=q, key=k, value=v, scale=self.scale, attn_mask=attn_bias_or_two_vector, dropout_p=0).transpose(1, 2).reshape(B, L, C)
+
             # oup: bf16
         
         return self.proj_drop(self.proj(oup))
+    
+    # Efficient implementation equivalent to the following:
+    def sdpa(self, query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None, enable_gqa=False):
+        L, S = query.size(-2), key.size(-2)
+        scale_factor = 1 / math.sqrt(query.size(-1)) if scale is None else scale
+        attn_bias = torch.zeros(L, S, dtype=query.dtype, device=query.device)
+        if is_causal:
+            assert attn_mask is None
+            temp_mask = torch.ones(L, S, dtype=torch.bool).tril(diagonal=0)
+            attn_bias.masked_fill_(temp_mask.logical_not(), float("-inf"))
+
+        if attn_mask is not None:
+            if attn_mask.dtype == torch.bool:
+                attn_bias.masked_fill_(attn_mask.logical_not(), float("-inf"))
+            else:
+                attn_bias = attn_mask + attn_bias
+
+        if enable_gqa:
+            key = key.repeat_interleave(query.size(-3)//key.size(-3), -3)
+            value = value.repeat_interleave(query.size(-3)//value.size(-3), -3)
+
+        attn_weight = query @ key.transpose(-2, -1) * scale_factor
+        attn_weight += attn_bias
+        attn_weight = torch.softmax(attn_weight, dim=-1)
+        # print("Attention weight shape:", attn_weight.shape)
+        attn_weight = torch.dropout(attn_weight, dropout_p, train=True)
+        return attn_weight @ value
     
     def extra_repr(self) -> str:
         tail = ''
